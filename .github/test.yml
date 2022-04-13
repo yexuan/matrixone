@@ -1,0 +1,28 @@
+# This workflow will inspect a pull request to ensure there is a linked issue or a
+# valid issue is mentioned in the body. If neither is present it fails the check and adds
+# a comment alerting users of this missing requirement.
+name: VerifyIssue
+
+on:
+  pull_request:
+    branches:
+      - main
+    types: [closed]
+
+
+jobs:
+  comment:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
+    steps:
+      - name: check on first merged pull requests
+        uses: sukki37/new-pull-request-comment-action@v0.1.0
+        id: first-check
+        with:
+          message: 'hello world!'
+        env:
+          GITHUB_TOKEN: ${{ secrets.TEST_TOKEN }}
+      - name: Run scheduled task
+        run: |
+          echo 'Adding this ${{ github.event.pull_request.user.login }} to Contributors...'
+          echo 'first-check output is ${{ steps.first-check.outputs.is_first_pr }}'
